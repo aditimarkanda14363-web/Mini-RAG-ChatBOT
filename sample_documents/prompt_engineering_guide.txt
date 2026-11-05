@@ -1,0 +1,24 @@
+# Comprehensive Guide to Prompt Engineering & LLM Architecture
+
+## 1. Principles of Prompt Engineering
+Prompt engineering is the practice of structuring, refining, and designing textual inputs to ensure Large Language Models (LLMs) produce accurate, relevant, and contextually grounded outputs.
+
+Key techniques include:
+- Zero-Shot Prompting: Direct queries provided to the language model without prior task examples.
+- Few-Shot Prompting: Providing one or more input-output exemplars within the context window to establish format, reasoning style, and expected answer structure.
+- Chain-of-Thought (CoT) Prompting: Encouraging step-by-step reasoning by explicitly instructing the model to "think step by step" before delivering the final answer.
+- Directional Stimulus Prompting: Providing explicit keywords or hints to guide the generation path.
+
+## 2. Retrieval-Augmented Generation (RAG)
+Retrieval-Augmented Generation (RAG) is an architectural framework designed to mitigate model hallucinations and eliminate knowledge cutoffs. Instead of relying solely on the parametric weights learned during pre-training, a RAG system performs runtime semantic retrieval from an external knowledge base.
+
+A typical RAG pipeline comprises four phases:
+1. Ingestion: Ingesting raw documents (e.g., PDF, TXT, DOCX), extracting raw text, and segmenting the content into coherent chunks with overlap.
+2. Embedding: Passing text chunks through a dedicated embedding model (such as all-MiniLM-L6-v2) to generate dense vector representations.
+3. Indexing & Storage: Indexing vector embeddings within a vector database (such as FAISS) using similarity indices (e.g., cosine similarity or inner product).
+4. Generation: Retrieving top-k most similar chunks relevant to the user query, formatting them into an engineered context prompt, and querying the generator LLM (such as LLaMA-3.2).
+
+## 3. Grounding and Epistemic Refusal
+Grounding refers to constraining the language model's output to strictly verifiable facts contained in the retrieved context. 
+Epistemic refusal occurs when an LLM acknowledges its lack of knowledge or the absence of evidence in the provided context, rather than fabricating a plausible-sounding hallucination. A well-engineered prompt contains explicit refusal rules:
+"If the context does not contain sufficient details to answer the question, state that you do not have enough information."
