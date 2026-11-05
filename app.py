@@ -635,7 +635,6 @@ if active_query:
             st.markdown('<span class="grounded-pill">✅ Factually Grounded</span>', unsafe_allow_html=True)
             
             def token_generator() -> Generator[str, None, None]:
-                nonlocal full_answer
                 stream = pipeline.llm_client.generate_stream(
                     prompt=query_ctx.prompt,
                     system_prompt=query_ctx.system_prompt,
@@ -643,19 +642,18 @@ if active_query:
                     temperature=query_ctx.temperature
                 )
                 for chunk in stream:
-                    full_answer += chunk
                     yield chunk
 
             # Stream tokens to UI in real-time
             try:
-                st.write_stream(token_generator)
+                full_answer = st.write_stream(token_generator)
             except Exception as e:
                 full_answer = f"⚠️ LLM Inference Error: {str(e)}"
                 st.error(full_answer)
                 sufficient_info = False
 
             # Check if LLM generated an explicit refusal inside the stream
-            if "cannot find sufficient information" in full_answer.lower() or "does not contain" in full_answer.lower():
+            if full_answer and ("cannot find sufficient information" in full_answer.lower() or "does not contain" in full_answer.lower()):
                 sufficient_info = False
 
         # 3. Interactive Sources & Telemetry Tabs for Live Message
